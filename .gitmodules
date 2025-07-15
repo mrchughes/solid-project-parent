@@ -1,0 +1,27 @@
+[submodule "api-registry"]
+	path = api-registry
+	url = https://github.com/mrchughes/api-registry.git
+[submodule "did-registry"]
+	path = did-registry
+	url = https://github.com/mrchughes/did-registry.git
+[submodule "mern-app"]
+	path = mern-app
+	url = https://github.com/mrchughes/mern-app.git
+[submodule "react-ui"]
+	path = react-ui
+	url = https://github.com/mrchughes/react-ui.git
+[submodule "solid-microservices"]
+	path = solid-microservices
+	url = https://github.com/mrchughes/solid-microservices.git
+[submodule "solid-pds"]
+	path = solid-pds
+	url = https://github.com/mrchughes/solid-pds.git
+[submodule "test-vc-creator"]
+	path = test-vc-creator
+	url = https://github.com/mrchughes/test-vc-creator.git
+[submodule "vc-issuer"]
+	path = vc-issuer
+	url = https://github.com/mrchughes/vc-issuer.git
+[submodule "vc-verifier"]
+	path = vc-verifier
+	url = https://github.com/mrchughes/vc-verifier.git
