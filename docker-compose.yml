@@ -1,0 +1,117 @@
+version: '3.8'
+
+services:
+  # Solid PDS (Personal Data Store)
+  solid-pds:
+    image: solidproject/community-solid-server:latest
+    container_name: solid-pds
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data/solid-pds:/data
+    environment:
+      - CSS_CONFIG=config/default.json
+      - CSS_PORT=3000
+    networks:
+      - pds-network
+
+  # DID Registry Service
+  did-registry:
+    build:
+      context: ./src/did-registry
+    container_name: did-registry
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./src/did-registry:/app
+      - ./data/did-registry:/data
+    environment:
+      - PORT=3001
+    networks:
+      - pds-network
+    depends_on:
+      - solid-pds
+
+  # Test VC Creator Service
+  test-vc-creator:
+    build:
+      context: ./src/test-vc-creator
+    container_name: test-vc-creator
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./src/test-vc-creator:/app
+      - ./data/test-vc-creator:/data
+    environment:
+      - PORT=3002
+      - DID_REGISTRY_URL=http://did-registry:3001
+      - SOLID_PDS_URL=http://solid-pds:3000
+    networks:
+      - pds-network
+    depends_on:
+      - solid-pds
+      - did-registry
+
+  # VC Verifier Service
+  vc-verifier:
+    build:
+      context: ./src/vc-verifier
+    container_name: vc-verifier
+    ports:
+      - "3003:3003"
+    volumes:
+      - ./src/vc-verifier:/app
+      - ./data/vc-verifier:/data
+    environment:
+      - PORT=3003
+      - DID_REGISTRY_URL=http://did-registry:3001
+      - SOLID_PDS_URL=http://solid-pds:3000
+    networks:
+      - pds-network
+    depends_on:
+      - solid-pds
+      - did-registry
+
+  # React UI
+  react-ui:
+    build:
+      context: ./src/react-ui
+    container_name: react-ui
+    ports:
+      - "3004:3004"
+    volumes:
+      - ./src/react-ui:/app
+    environment:
+      - PORT=3004
+      - SOLID_PDS_URL=http://localhost:3000
+      - TEST_VC_CREATOR_URL=http://localhost:3002
+      - VC_VERIFIER_URL=http://localhost:3003
+    networks:
+      - pds-network
+    depends_on:
+      - solid-pds
+      - test-vc-creator
+      - vc-verifier
+
+  # MERN Stack Benefit Application
+  mern-app:
+    build:
+      context: ./src/mern-app
+    container_name: mern-app
+    ports:
+      - "3005:3005"
+    volumes:
+      - ./src/mern-app:/app
+    environment:
+      - PORT=3005
+      - SOLID_PDS_URL=http://solid-pds:3000
+      - VC_VERIFIER_URL=http://vc-verifier:3003
+    networks:
+      - pds-network
+    depends_on:
+      - solid-pds
+      - vc-verifier
+
+networks:
+  pds-network:
+    driver: bridge
