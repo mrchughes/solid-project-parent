@@ -1,6 +1,6 @@
 # Personal Data Store (PDS) Microservices System
 
-This project implements a modular microservices-based prototype for handling verifiable credentials with a Solid-compliant Personal Data Store (PDS). The system enables users to obtain verifiable credentials from a government department simulator (DRO) and use them in a benefits application, all while maintaining control of their personal data.
+This project implements a modular microservices-based prototype for handling verifiable credentials with a Solid-compliant Personal Data Store (PDS). The system enables users to obtain verifiable credentials from a government department simulator (DRO) and use them in a Frontend Portal application, all while maintaining control of their personal data.
 
 ## Architecture
 
@@ -10,7 +10,7 @@ The system consists of the following microservices:
 2. **Solid PDS** - Personal Data Store based on Community Solid Server for hosting user data and WebIDs
 3. **DRO** - Emulates a Departmental Records Office, issuing birth and marriage certificates as verifiable credentials using did:web
 4. **VC Verifier** - Service for verifying credentials using direct did:web resolution
-5. **FEP** - Benefits application with PDS integration for credential verification
+5. **FEP** - Frontend Portal application with PDS integration for credential verification
 
 Each service implements did:web directly where needed, without relying on a central DID Registry. For more details on the updated architecture, see [docs/UPDATED_ARCHITECTURE.md](./docs/UPDATED_ARCHITECTURE.md).
 
@@ -42,7 +42,7 @@ PDS/
 │   └── specifications/         # API specifications
 ├── vc-verifier/                # Service for verifying credentials
 │   └── specifications/         # API specifications
-├── FEP/                   # Benefits application with PDS integration
+├── FEP/                   # Frontend Portal application with PDS integration
 │   └── specifications/         # API specifications
 └── data/                       # Persistent data storage
     ├── api-registry/

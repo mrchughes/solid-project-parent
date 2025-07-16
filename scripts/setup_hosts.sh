@@ -12,7 +12,7 @@ echo "Updating /etc/hosts for PDS domain emulation..."
 # Check if entries already exist
 if grep -q "pds.local" /etc/hosts && \
    grep -q "dro.gov.uk.local" /etc/hosts && \
-   grep -q "benefits.gov.uk.local" /etc/hosts && \
+   grep -q "fep.gov.uk.local" /etc/hosts && \
    grep -q "verifier.gov.uk.local" /etc/hosts; then
   echo "Host entries already exist."
 else
@@ -21,7 +21,7 @@ else
   echo "# PDS domain emulation" >> /etc/hosts
   echo "127.0.0.1  pds.local" >> /etc/hosts
   echo "127.0.0.1  dro.gov.uk.local" >> /etc/hosts
-  echo "127.0.0.1  benefits.gov.uk.local" >> /etc/hosts
+  echo "127.0.0.1  fep.gov.uk.local" >> /etc/hosts
   echo "127.0.0.1  verifier.gov.uk.local" >> /etc/hosts
   echo "127.0.0.1  api-registry.local" >> /etc/hosts
   

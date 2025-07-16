@@ -122,7 +122,8 @@ services:
       - VC_VERIFIER_URL=http://vc-verifier:3004
       - API_REGISTRY_URL=http://api-registry:3005
       - API_REGISTRY_KEY=your-api-key-here
-      - APP_DOMAIN=benefits.gov.uk.local
+      - APP_DOMAIN=fep.gov.uk.local
+      - APP_NAME=FEP Application
     networks:
       - pds-network
     depends_on:

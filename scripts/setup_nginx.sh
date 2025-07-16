@@ -41,10 +41,10 @@ server {
     }
 }
 
-# Benefits App domain
+# FEP App domain
 server {
     listen 80;
-    server_name benefits.gov.uk.local;
+    server_name fep.gov.uk.local;
     
     # Route to FEP App
     location / {
