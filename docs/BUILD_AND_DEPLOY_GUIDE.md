@@ -153,7 +153,7 @@ Always provide these details to Copilot:
 
 1. **Navigate to the service directory**:
    ```bash
-   cd test-vc-creator
+   cd DRO
    ```
 
 2. **Review specifications**:
@@ -184,7 +184,7 @@ Always provide these details to Copilot:
 
 1. **Navigate to the service directory**:
    ```bash
-   cd mern-app
+   cd FEP
    ```
 
 2. **Review specifications**:

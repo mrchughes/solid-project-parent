@@ -27,14 +27,14 @@ server {
     
     # Route to DRO service
     location / {
-        proxy_pass http://test-vc-creator:3002;
+        proxy_pass http://DRO:3002;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
     }
     
     # Ensure .well-known/did.json is accessible
     location /.well-known/did.json {
-        proxy_pass http://test-vc-creator:3002/.well-known/did.json;
+        proxy_pass http://DRO:3002/.well-known/did.json;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         add_header Access-Control-Allow-Origin *;
@@ -46,16 +46,16 @@ server {
     listen 80;
     server_name benefits.gov.uk.local;
     
-    # Route to MERN App
+    # Route to FEP App
     location / {
-        proxy_pass http://mern-app:3003;
+        proxy_pass http://FEP:3003;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
     }
     
     # Ensure .well-known/did.json is accessible
     location /.well-known/did.json {
-        proxy_pass http://mern-app:3003/.well-known/did.json;
+        proxy_pass http://FEP:3003/.well-known/did.json;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         add_header Access-Control-Allow-Origin *;

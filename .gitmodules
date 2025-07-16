@@ -4,8 +4,8 @@
 [submodule "did-registry"]
 	path = did-registry
 	url = https://github.com/mrchughes/did-registry.git
-[submodule "mern-app"]
-	path = mern-app
+[submodule "FEP"]
+	path = FEP
 	url = https://github.com/mrchughes/mern-app.git
 [submodule "react-ui"]
 	path = react-ui
@@ -13,8 +13,8 @@
 [submodule "solid-pds"]
 	path = solid-pds
 	url = https://github.com/mrchughes/solid-pds.git
-[submodule "test-vc-creator"]
-	path = test-vc-creator
+[submodule "DRO"]
+	path = DRO
 	url = https://github.com/mrchughes/test-vc-creator.git
 [submodule "vc-verifier"]
 	path = vc-verifier

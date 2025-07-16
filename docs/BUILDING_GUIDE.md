@@ -160,10 +160,10 @@ cd /Users/chrishughes/Projects/PDS/vc-verifier
    - Run: `docker build -t vc-verifier .`
    - Run: `docker run -p 3002:3002 vc-verifier`
 
-### 5. Building the Test VC Creator (DRO)
+### 5. Building the DRO
 
 ```
-cd /Users/chrishughes/Projects/PDS/test-vc-creator
+cd /Users/chrishughes/Projects/PDS/DRO
 ```
 
 1. **Open the Implementation Guide**:
@@ -191,13 +191,13 @@ cd /Users/chrishughes/Projects/PDS/test-vc-creator
    - Prompt: "Create comprehensive tests for the Test VC Creator service, including all credential issuance flows"
    
 9. **Build and run the service**:
-   - Run: `docker build -t test-vc-creator .`
-   - Run: `docker run -p 3003:3003 test-vc-creator`
+   - Run: `docker build -t DRO .`
+   - Run: `docker run -p 3003:3003 DRO`
 
-### 6. Building the MERN App
+### 6. Building the FEP (MERN App)
 
 ```
-cd /Users/chrishughes/Projects/PDS/mern-app
+cd /Users/chrishughes/Projects/PDS/FEP
 ```
 
 1. **Open the Implementation Guide**:
@@ -228,8 +228,8 @@ cd /Users/chrishughes/Projects/PDS/mern-app
    - Prompt: "Create comprehensive tests for the MERN app, including all user flows and integration tests"
    
 10. **Build and run the service**:
-    - Run: `docker build -t mern-app .`
-    - Run: `docker run -p 3004:3004 mern-app`
+    - Run: `docker build -t FEP .`
+    - Run: `docker run -p 3004:3004 FEP`
 
 ## Running the Complete System
 

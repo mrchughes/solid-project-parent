@@ -8,9 +8,9 @@ The system consists of the following microservices:
 
 1. **API Registry** - Central registry for service API discovery and documentation
 2. **Solid PDS** - Personal Data Store based on Community Solid Server for hosting user data and WebIDs
-3. **Test VC Creator (DRO)** - Emulates a Departmental Records Office, issuing birth and marriage certificates as verifiable credentials using did:web
+3. **DRO** - Emulates a Departmental Records Office, issuing birth and marriage certificates as verifiable credentials using did:web
 4. **VC Verifier** - Service for verifying credentials using direct did:web resolution
-5. **MERN App** - Benefits application with PDS integration for credential verification
+5. **FEP** - Benefits application with PDS integration for credential verification
 
 Each service implements did:web directly where needed, without relying on a central DID Registry. For more details on the updated architecture, see [docs/UPDATED_ARCHITECTURE.md](./docs/UPDATED_ARCHITECTURE.md).
 
@@ -38,18 +38,18 @@ PDS/
 │   └── specifications/         # API specifications
 ├── solid-pds/                  # Solid PDS service
 │   └── specifications/         # API specifications
-├── test-vc-creator/            # DRO service for issuing credentials
+├── DRO/                  # DRO service for issuing credentials
 │   └── specifications/         # API specifications
 ├── vc-verifier/                # Service for verifying credentials
 │   └── specifications/         # API specifications
-├── mern-app/                   # Benefits application with PDS integration
+├── FEP/                   # Benefits application with PDS integration
 │   └── specifications/         # API specifications
 └── data/                       # Persistent data storage
     ├── api-registry/
     ├── solid-pds/
-    ├── test-vc-creator/
+    ├── DRO/
     ├── vc-verifier/
-    └── mern-app/
+    └── FEP/
 ```
 
 ## Authentication & Authorization Flows

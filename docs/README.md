@@ -29,6 +29,6 @@ Each service also has its own implementation guide in its respective directory:
 
 - `/api-registry/README.md` - API Registry documentation
 - `/solid-pds/README.md` - Solid PDS documentation
-- `/test-vc-creator/README.md` - Test VC Creator (DRO) documentation
+- `/DRO/README.md` - DRO documentation
 - `/vc-verifier/README.md` - VC Verifier documentation
-- `/mern-app/README.md` - MERN App documentation
+- `/FEP/README.md` - FEP App documentation

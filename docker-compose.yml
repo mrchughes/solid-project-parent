@@ -15,8 +15,8 @@ services:
       - pds-network
     depends_on:
       - solid-pds
-      - test-vc-creator
-      - mern-app
+      - DRO
+      - FEP
       - vc-verifier
 
   # API Registry Service
@@ -60,18 +60,18 @@ services:
       - api-registry
 
   # Test VC Creator Service (DRO)
-  test-vc-creator:
+  DRO:
     build:
-      context: ./test-vc-creator
-    container_name: test-vc-creator
+      context: ./DRO
+    container_name: DRO
     ports:
       - "3002:3002"
     volumes:
-      - ./test-vc-creator:/app
-      - ./data/test-vc-creator:/data
+      - ./DRO:/app
+      - ./data/DRO:/data
     environment:
       - PORT=3002
-      - SERVICE_NAME=test-vc-creator
+      - SERVICE_NAME=DRO
       - SERVICE_VERSION=1.0.0
       - SOLID_PDS_URL=http://solid-pds:3000
       - API_REGISTRY_URL=http://api-registry:3005
@@ -104,19 +104,19 @@ services:
     depends_on:
       - api-registry
 
-  # MERN App Extension
-  mern-app:
+  # MERN App Extension (FEP)
+  FEP:
     build:
-      context: ./mern-app
-    container_name: mern-app
+      context: ./FEP
+    container_name: FEP
     ports:
       - "3003:3003"
     volumes:
-      - ./mern-app:/app
-      - ./data/mern-app:/data
+      - ./FEP:/app
+      - ./data/FEP:/data
     environment:
       - PORT=3003
-      - SERVICE_NAME=mern-app
+      - SERVICE_NAME=FEP
       - SERVICE_VERSION=1.0.0
       - SOLID_PDS_URL=http://solid-pds:3000
       - VC_VERIFIER_URL=http://vc-verifier:3004

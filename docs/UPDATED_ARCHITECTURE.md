@@ -110,7 +110,7 @@ To emulate different domains locally:
      listen 80;
      server_name dro.gov.uk.local;
      location / {
-       proxy_pass http://test-vc-creator:3002;
+       proxy_pass http://DRO:3002;
      }
    }
    
@@ -118,7 +118,7 @@ To emulate different domains locally:
      listen 80;
      server_name benefits.gov.uk.local;
      location / {
-       proxy_pass http://mern-app:3003;
+       proxy_pass http://FEP:3003;
      }
    }
    
