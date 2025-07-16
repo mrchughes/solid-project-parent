@@ -399,3 +399,38 @@ Value: your-api-key-here
 
 You can set the API key in your .env file as API_KEY=your-api-key-here.
 Share this key with other services so they can publish their specs.
+
+
+*********** Adendum - DID Registry is now built and this is details *********
+
+Here’s a quick summary for your overall spec:
+
+How Other Services Can Connect to the DID Registry via API Registry
+Discover the DID Registry API
+
+Fetch the OpenAPI specification from the API Registry:
+
+GET http://localhost:3005/specs/did-registry/latest
+Include header: X-API-Key: your-api-key-here
+Use the Specification
+
+Parse the OpenAPI spec to understand available endpoints, request/response formats, and authentication requirements.
+Call DID Registry Endpoints
+
+Example endpoints:
+List DIDs: GET http://localhost:3001/dids
+Get DID Document: GET http://localhost:3001/dids/{did}
+Register DID: POST http://localhost:3001/dids
+Use the details from the spec for request formatting.
+Authentication
+
+If required, include the API key in requests using the header:
+
+X-API-Key: your-api-key-here
+Documentation
+
+Interactive docs: http://localhost:3005/ui/did-registry/latest
+This enables any service to discover, integrate, and interact with the DID Registry using the API Registry as a central source of truth.5. Documentation
+
+Interactive docs: http://localhost:3005/ui/did-registry/latest
+This enables any service to discover, integrate, and interact with the DID Registry using the API Registry as a central source of truth
