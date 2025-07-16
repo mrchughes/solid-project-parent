@@ -18,7 +18,6 @@ services:
       - test-vc-creator
       - mern-app
       - vc-verifier
-      - did-registry
 
   # API Registry Service
   api-registry:
@@ -37,27 +36,6 @@ services:
       - API_KEY=your-api-key-here
     networks:
       - pds-network
-
-  # DID Registry Service
-  did-registry:
-    build:
-      context: ./did-registry
-    container_name: did-registry
-    ports:
-      - "3001:3001"
-    volumes:
-      - ./did-registry:/app
-      - ./data/did-registry:/data
-    environment:
-      - PORT=3001
-      - SERVICE_NAME=did-registry
-      - SERVICE_VERSION=1.0.0
-      - API_REGISTRY_URL=http://api-registry:3005
-      - API_REGISTRY_KEY=your-api-key-here
-    networks:
-      - pds-network
-    depends_on:
-      - api-registry
 
   # Solid PDS (Personal Data Store)
   solid-pds:
@@ -96,7 +74,6 @@ services:
       - SERVICE_NAME=test-vc-creator
       - SERVICE_VERSION=1.0.0
       - SOLID_PDS_URL=http://solid-pds:3000
-      - DID_REGISTRY_URL=http://did-registry:3001
       - API_REGISTRY_URL=http://api-registry:3005
       - API_REGISTRY_KEY=your-api-key-here
       - DRO_DOMAIN=dro.gov.uk.local
@@ -105,7 +82,6 @@ services:
     depends_on:
       - solid-pds
       - api-registry
-      - did-registry
 
   # VC Verifier Service
   vc-verifier:
@@ -121,14 +97,12 @@ services:
       - PORT=3004
       - SERVICE_NAME=vc-verifier
       - SERVICE_VERSION=1.0.0
-      - DID_REGISTRY_URL=http://did-registry:3001
       - API_REGISTRY_URL=http://api-registry:3005
       - API_REGISTRY_KEY=your-api-key-here
     networks:
       - pds-network
     depends_on:
       - api-registry
-      - did-registry
 
   # MERN App Extension
   mern-app:

@@ -7,25 +7,34 @@ This project implements a modular microservices-based prototype for handling ver
 The system consists of the following microservices:
 
 1. **API Registry** - Central registry for service API discovery and documentation
-2. **DID Registry** - Registry for did:web identifiers and DID documents
-3. **Solid PDS** - Personal Data Store based on Community Solid Server for hosting user data
-4. **VC Verifier** - Service for verifying credentials using DID resolution
-5. **Test VC Creator (DRO)** - Emulates a Departmental Records Office, issuing birth and marriage certificates as verifiable credentials using did:web
-6. **MERN App** - Benefits application with PDS integration for credential verification
+2. **Solid PDS** - Personal Data Store based on Community Solid Server for hosting user data and WebIDs
+3. **Test VC Creator (DRO)** - Emulates a Departmental Records Office, issuing birth and marriage certificates as verifiable credentials using did:web
+4. **VC Verifier** - Service for verifying credentials using direct did:web resolution
+5. **MERN App** - Benefits application with PDS integration for credential verification
+
+Each service implements did:web directly where needed, without relying on a central DID Registry. For more details on the updated architecture, see [docs/UPDATED_ARCHITECTURE.md](./docs/UPDATED_ARCHITECTURE.md).
 
 ## Directory Structure
 
 ```
 PDS/
 ├── docker-compose.yml          # Container orchestration
-├── BUILDING_GUIDE.md           # Guide for building each service
-├── IMPLEMENTATION_VERIFICATION.md # Verification of implementation guides
-├── nginx/                      # Reverse proxy configuration for domain emulation
+├── docs/                       # Documentation
+│   ├── BUILDING_GUIDE.md       # Guide for building each service
+│   ├── BUILD_AND_DEPLOY_GUIDE.md # Detailed build and deployment guide
+│   ├── DID_MIGRATION_GUIDE.md  # Guide for migrating to direct did:web
+│   ├── IMPLEMENTATION_VERIFICATION.md # Verification of implementation
+│   ├── MICROSERVICES_BEST_PRACTICES.md # Best practices guide
+│   ├── SERVICE_IMPLEMENTATION_CHECKLIST.md # Implementation checklist
+│   ├── UPDATED_ARCHITECTURE.md # Updated architecture documentation
+│   └── ARCHITECTURE_UPDATE_SUMMARY.md # Architecture update summary
+├── scripts/                    # Utility scripts
+│   ├── setup_hosts.sh          # Script to set up local host entries
+│   └── setup_nginx.sh          # Script to set up nginx configuration
+├── nginx/                      # Reverse proxy configuration
 │   ├── conf/                   # Nginx configuration files
 │   └── certs/                  # Self-signed certificates for HTTPS
 ├── api-registry/               # API Registry service
-│   └── specifications/         # API specifications
-├── did-registry/               # DID Registry service
 │   └── specifications/         # API specifications
 ├── solid-pds/                  # Solid PDS service
 │   └── specifications/         # API specifications
@@ -37,7 +46,6 @@ PDS/
 │   └── specifications/         # API specifications
 └── data/                       # Persistent data storage
     ├── api-registry/
-    ├── did-registry/
     ├── solid-pds/
     ├── test-vc-creator/
     ├── vc-verifier/
@@ -96,11 +104,38 @@ PDS/
 
 5. Access the services:
    - API Registry: http://localhost:3005
-   - DID Registry: http://localhost:3001
    - Solid PDS: https://pds.local
-   - VC Verifier: http://localhost:3004
+   - VC Verifier: http://localhost:3004 or https://verifier.gov.uk.local
    - DRO Service: https://dro.gov.uk.local
    - Benefits App: https://benefits.gov.uk.local
+
+## Setup Instructions
+
+1. Clone this repository:
+   ```
+   git clone https://github.com/mrchughes/solid-project-parent.git
+   cd solid-project-parent
+   ```
+
+2. Set up host entries (requires root/admin privileges):
+   ```
+   sudo ./scripts/setup_hosts.sh
+   ```
+
+3. Set up the nginx configuration:
+   ```
+   ./scripts/setup_nginx.sh
+   ```
+
+4. Start the services:
+   ```
+   docker-compose up -d
+   ```
+
+5. For implementation details for each service, refer to:
+   - [DID Migration Guide](./docs/DID_MIGRATION_GUIDE.md) for implementing did:web
+   - [Updated Architecture](./docs/UPDATED_ARCHITECTURE.md) for architecture details
+   - Individual service README files for specific implementation requirements
 
 ## Service Development
 
@@ -117,7 +152,7 @@ Each microservice is designed to be developed independently, with integration th
 
 ### Building All Services
 
-To build and run all services together, follow the instructions in the `BUILDING_GUIDE.md` file, which provides a step-by-step guide for building each service with GitHub Copilot.
+To build and run all services together, follow the instructions in the `docs/BUILDING_GUIDE.md` file, which provides a step-by-step guide for building each service with GitHub Copilot.
 
 ### Implementation Requirements
 
@@ -129,13 +164,18 @@ All services must be fully implemented with:
 
 ## Documentation
 
-- `BUILDING_GUIDE.md` - Step-by-step guide for building each service
-- `IMPLEMENTATION_VERIFICATION.md` - Verification of implementation guides
-- `REPOSITORY_CLEANUP_PLAN.md` - Plan for cleaning up the repository
-- Service-specific implementation guides in each service directory
-3. Implement the service according to specifications
-4. Publish the API specification to the API Registry
-5. Test the service with its defined API tests
+All project documentation is located in the `docs/` directory:
+
+- `docs/BUILDING_GUIDE.md` - Step-by-step guide for building each service
+- `docs/BUILD_AND_DEPLOY_GUIDE.md` - Detailed build and deployment guide
+- `docs/IMPLEMENTATION_VERIFICATION.md` - Verification of implementation guides
+- `docs/UPDATED_ARCHITECTURE.md` - Updated architecture documentation
+- `docs/ARCHITECTURE_UPDATE_SUMMARY.md` - Summary of architecture changes
+- `docs/DID_MIGRATION_GUIDE.md` - Guide for migrating to direct did:web implementation
+- `docs/MICROSERVICES_BEST_PRACTICES.md` - Best practices for loose coupling and high cohesion
+- `docs/SERVICE_IMPLEMENTATION_CHECKLIST.md` - Checklist for service implementation
+
+Each service also has its own implementation guide in its respective directory.
 
 ### Service Integration
 
@@ -143,6 +183,32 @@ Services integrate with each other by:
 1. Discovering API specifications from the API Registry
 2. Using the API specifications to make standardized requests
 3. Following the defined authentication/authorization patterns
+4. Resolving DIDs directly using the did:web method
+
+## Independent Building and Testing
+
+Each microservice in this system can be built and tested independently:
+
+1. Each service has its own repository with complete documentation
+2. Services interact only through published API contracts via the API Registry
+3. Services have no direct knowledge of other services' internal implementations
+4. Dependencies are specified via environment variables with clear defaults
+
+To build any service independently:
+
+```bash
+# Navigate to the service directory
+cd service-name
+
+# Install dependencies
+npm install
+
+# Run tests
+npm test
+
+# Start the service
+npm start
+```
 
 ## License
 
