@@ -305,3 +305,97 @@ If you encounter issues:
 ---
 
 Remember: The key to successful development with Copilot is providing clear context about the service's responsibilities and its interactions with other services through well-defined APIs.
+
+# How to Use the API Registry Service
+
+## 1. Publish Your API Specification
+
+Send a POST request to `http://api-registry:3005/specs` with your OpenAPI spec, service name, and version. Include the API key in the `X-API-Key` header.
+
+**Example (Node.js):**
+```js
+const fs = require('fs');
+const axios = require('axios');
+
+async function publishApiSpec() {
+  const apiSpec = JSON.parse(fs.readFileSync('./specifications/api-spec.json', 'utf8'));
+  await axios.post('http://api-registry:3005/specs', {
+    serviceName: process.env.SERVICE_NAME,
+    version: process.env.SERVICE_VERSION,
+    specification: apiSpec,
+    description: 'API specification for ' + process.env.SERVICE_NAME
+  }, {
+    headers: {
+      'Content-Type': 'application/json',
+      'X-API-Key': process.env.API_REGISTRY_KEY
+    }
+  });
+}
+```
+
+## 2. Retrieve API Specifications
+
+- To get a specific version: `GET http://api-registry:3005/specs/{serviceName}/{version}`
+- To get the latest version: `GET http://api-registry:3005/specs/{serviceName}/latest`
+
+**Example:**
+```js
+const axios = require('axios');
+async function getServiceApiSpec(serviceName) {
+  const response = await axios.get(`http://api-registry:3005/specs/${serviceName}/latest`);
+  return response.data;
+}
+```
+
+## 3. View Interactive API Documentation
+
+Visit `http://api-registry:3005/ui/{serviceName}/{version}` in your browser.
+
+## 4. API Registry’s Own API Docs
+
+Visit `http://api-registry:3005/api-docs` for documentation.
+
+## 5. Environment Variables Needed
+
+- `API_REGISTRY_KEY` (for authentication)
+- `SERVICE_NAME` and `SERVICE_VERSION` (for publishing)
+
+---
+
+Share this file with developers of other services to ensure proper integration with the API Registry.
+
+
+
+*********** Adendum - SOLID PDS is now built and this is details *********
+Service Endpoints Available:
+Solid PDS Server: http://localhost:3000/
+OpenID Configuration: http://localhost:3000/.well-known/openid-configuration
+Client Registration: http://localhost:3000/idp/register
+Token Endpoint: http://localhost:3000/idp/token
+User Info: http://localhost:3000/idp/userinfo
+API Registry Spec: http://localhost:3005/specs/solid-pds/1.0.0
+API Documentation: http://localhost:3005/ui/solid-pds/1.0.0
+🔧 Configuration Details:
+Service Name: solid-pds
+Version: 1.0.0
+API Key: your-api-key-here
+Storage: File-based in data directory
+Authentication: OpenID Connect with WebID support
+Authorization: WebACL (Web Access Control)
+The Solid PDS is now ready to serve as a fully functional Personal Data Store with Solid Protocol compliance and is properly registered in the API Registry for service discovery!
+
+*********** Adendum - API Registry is now built and this is details *********
+The API Registry container is now running and available on port 3005.
+You can proceed with development and integration for other services.
+
+what is url and key to use it?
+
+The API Registry service is running at:
+URL: http://localhost:3005
+
+To publish API specifications, use the following header for authentication:
+Header: X-API-Key
+Value: your-api-key-here
+
+You can set the API key in your .env file as API_KEY=your-api-key-here.
+Share this key with other services so they can publish their specs.
