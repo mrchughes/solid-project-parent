@@ -1,7 +1,7 @@
-# Building, Testing, and Deploying the Solid Microservices System
-## An Idiot's Guide for Copilot-Assisted Development
+# Building, Testing, and Deploying the PDS Microservices System
+## A Guide for Copilot-Assisted Development
 
-This document provides step-by-step instructions for building, testing, and deploying each microservice in our Solid-based system. It's designed for developers using GitHub Copilot to implement each service independently.
+This document provides step-by-step instructions for building, testing, and deploying each microservice in our PDS system. It's designed for developers using GitHub Copilot to implement each service independently.
 
 ## Table of Contents
 1. [Prerequisites](#prerequisites)
@@ -19,9 +19,10 @@ Before starting development, ensure you have:
 
 - [Git](https://git-scm.com/downloads) installed
 - [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) installed
-- [Node.js](https://nodejs.org/) (v16+) installed
+- [Node.js](https://nodejs.org/) (v18+) installed
 - Access to GitHub Copilot
 - Your favorite code editor (VS Code recommended)
+- Ability to modify /etc/hosts file (for local domain emulation)
 
 ## Development Principles
 
@@ -30,6 +31,7 @@ Before starting development, ensure you have:
 3. **Test-Driven Development**: Write tests before implementing features.
 4. **Container-Based**: Each service should run in its own Docker container.
 5. **API Registry Integration**: All services must publish their API specifications to the API Registry.
+6. **did:web Implementation**: Services use did:web for decentralized identifiers.
 
 ## Build Order
 
@@ -37,11 +39,8 @@ Develop services in this order to minimize dependencies:
 
 1. **API Registry Service** - Enables other services to publish and discover APIs
 2. **Solid PDS** - Core data storage service
-3. **DID Registry** - Identity management
-4. **VC Verifier** - Verifies credentials
-5. **Test VC Creator** - Generates test credentials
-6. **React UI** - User interface
-7. **MERN App** - Example application
+3. **Test VC Creator (DRO)** - Departmental Records Office emulation
+4. **MERN App Extension** - Integration module for benefits application
 
 ## Working with Copilot
 
@@ -51,7 +50,7 @@ When working with GitHub Copilot on each service, use these prompt patterns:
 
 1. **Initial Context Setting**:
    ```
-   I'm building the [service name] for a Solid-based microservices system. The API spec is in the specifications/ folder. This service is isolated and should only communicate with other services via their published APIs, which are available through the API Registry. There is a detailed API Registry integration specification in specifications/api-registry-integration.md that I need to follow.
+   I'm building the [service name] for a PDS microservices system. The API spec is in the specifications/ folder. This service is isolated and should only communicate with other services via their published APIs, which are available through the API Registry. I need to implement the API Registry integration as specified in specifications/api-registry-integration.md.
    ```
 
 2. **Implementation Requests**:
@@ -83,11 +82,6 @@ When beginning work on a service, use these specific prompts to direct Copilot t
    Based on the requirements in specifications/api-registry-integration.md, help me implement the code to publish and/or consume API specifications for this service.
    ```
 
-3. **During Implementation Reviews**:
-   ```
-   Check if our implementation complies with the API Registry integration requirements specified in specifications/api-registry-integration.md.
-   ```
-
 ### What Copilot Needs to Know
 
 Always provide these details to Copilot:
@@ -95,7 +89,8 @@ Always provide these details to Copilot:
 - Location of API specifications (`specifications/` folder)
 - Location of API Registry integration requirements (`specifications/api-registry-integration.md`)
 - Reminder about service isolation
-- Information about environment variables from docker-compose.yml
+- Information about did:web implementation requirements
+- Authentication/authorization patterns for the service
 
 ## Service-by-Service Guide
 
@@ -152,6 +147,87 @@ Always provide these details to Copilot:
 5. **Publish API spec to Registry**:
    - Prompt: "Based on the requirements in specifications/api-registry-integration.md, help me implement the code to publish this service's API specification to the API Registry."
 
+### 3. Test VC Creator (DRO)
+
+**Goal**: Implement a Departmental Records Office emulator that issues verifiable credentials.
+
+1. **Navigate to the service directory**:
+   ```bash
+   cd test-vc-creator
+   ```
+
+2. **Review specifications**:
+   ```bash
+   cat specifications/api-spec.md
+   cat specifications/api-registry-integration.md
+   ```
+
+3. **Implement with Copilot**:
+   - Prompt: "I'm implementing a Test VC Creator service that emulates a Departmental Records Office (DRO). It needs to issue birth and marriage certificates as verifiable credentials using did:web, have its own user authentication system, and store credentials in a user's PDS."
+   - Next prompt: "Help me implement the did:web functionality including the .well-known endpoint for DID document resolution."
+   - Next prompt: "Let's implement the user registration and authentication system for the DRO."
+   - Next prompt: "Now, I need to implement the credential issuance functionality for birth and marriage certificates using did:web signatures."
+   - Final prompt: "Help me implement the PDS integration to store issued credentials in the user's pod."
+
+4. **Test the implementation**:
+   - Write tests for user authentication
+   - Write tests for did:web implementation
+   - Write tests for credential issuance
+   - Write tests for PDS integration
+
+5. **Publish API spec to Registry**:
+   - Prompt: "Help me implement the code to publish this service's API specification to the API Registry according to specifications/api-registry-integration.md."
+
+### 4. MERN App Extension
+
+**Goal**: Create an extension module for the MERN benefits application to integrate with the PDS.
+
+1. **Navigate to the service directory**:
+   ```bash
+   cd mern-app
+   ```
+
+2. **Review specifications**:
+   ```bash
+   cat specifications/api-spec.md
+   cat specifications/api-registry-integration.md
+   ```
+
+3. **Implement with Copilot**:
+   - Prompt: "I'm creating an extension module for a MERN app to integrate with a Solid PDS. The module needs to register as a client with the PDS, handle OAuth-style authorization for one-time permission, and access VCs stored in the user's pod."
+   - Next prompt: "Let's implement the client registration with the Solid PDS."
+   - Next prompt: "Now, help me implement the OAuth authorization flow with token management."
+   - Next prompt: "I need to implement the VC retrieval and verification functionality using did:web resolution."
+   - Final prompt: "Let's create a clean API that can be easily integrated with an existing MERN app."
+
+4. **Test the implementation**:
+   - Write tests for PDS client registration
+   - Write tests for OAuth flow
+   - Write tests for VC retrieval and verification
+   - Write tests for the integration API
+
+5. **Publish API spec to Registry**:
+   - Prompt: "Help me implement the code to publish this service's API specification to the API Registry according to specifications/api-registry-integration.md."
+
+## Testing
+
+### Individual Service Testing
+
+For each service:
+
+1. **Unit Tests**:
+   ```bash
+   cd [service-directory]
+   npm test
+   ```
+
+2. **API Conformance Testing**:
+   - Use the API Registry to validate implementations against specifications
+   - Prompt: "Write a test script that validates this service's API implementation against the specification in the API Registry."
+
+5. **Publish API spec to Registry**:
+   - Prompt: "Based on the requirements in specifications/api-registry-integration.md, help me implement the code to publish this service's API specification to the API Registry."
+
 ### 3. DID Registry Service
 
 And so on for each service... (details similar to above)
@@ -178,40 +254,90 @@ Once all services are implemented:
 
 1. **Start the system**:
    ```bash
-   cd solid-microservices
    docker-compose up -d
    ```
 
-2. **Test service interactions**:
-   - Create a test script that exercises the full workflow
-   - Verify data flows correctly between services
+2. **Test end-to-end flows**:
+   - DRO credential issuance flow
+   - MERN app credential retrieval flow
+   - did:web resolution flow
+
+3. **Validate against requirements**:
+   - Check each service's compliance with its API spec
+   - Verify integration points work correctly
+   - Confirm authentication flows operate as expected
 
 ## Deployment
 
 ### Local Deployment
 
-```bash
-cd solid-microservices
-docker-compose up -d
-```
-
-### Production Deployment
-
-1. **Prepare environment**:
-   - Set up proper DNS
-   - Configure TLS certificates
-   - Set secure environment variables
-
-2. **Deploy with Docker Compose**:
+1. **Build all containers**:
    ```bash
-   docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+   docker-compose build
    ```
 
-3. **Verify deployment**:
-   - Check service health endpoints
-   - Run smoke tests against the deployed system
+2. **Start the system**:
+   ```bash
+   docker-compose up -d
+   ```
 
-## API Registry Integration Details
+3. **Verify all services are running**:
+   ```bash
+   docker-compose ps
+   ```
+
+4. **Access the services**:
+   - API Registry: http://localhost:3005
+   - Solid PDS: https://pds.local
+   - DRO Service: https://dro.gov.uk.local
+   - Benefits App: https://benefits.gov.uk.local
+
+### Production Deployment Considerations
+
+For production deployment, consider:
+
+1. **Security hardening**:
+   - Use proper SSL certificates
+   - Implement proper authentication mechanisms
+   - Secure container images
+
+2. **Scaling**:
+   - Configure appropriate resource limits
+   - Consider containerized deployment to Kubernetes
+   - Implement service monitoring
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Service fails to start**:
+   - Check logs: `docker-compose logs [service-name]`
+   - Verify environment variables in docker-compose.yml
+   - Check for port conflicts
+
+2. **Services can't communicate**:
+   - Verify API Registry is running
+   - Check network configuration in docker-compose.yml
+   - Ensure services are publishing specs correctly
+
+3. **API Registry integration issues**:
+   - Verify API_REGISTRY_URL is set correctly
+   - Check API publishing code
+   - Verify API specs are valid OpenAPI
+
+4. **did:web resolution issues**:
+   - Check local domain configuration in /etc/hosts
+   - Verify nginx configuration
+   - Ensure .well-known endpoints are accessible
+
+### Getting Help
+
+If you encounter issues:
+
+1. Check the service specifications
+2. Review the API Registry logs
+3. Consult the service-specific README
+4. Check for errors in nginx logs for domain resolution issues
 
 ### Publishing an API Specification
 

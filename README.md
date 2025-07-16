@@ -1,42 +1,64 @@
 # Personal Data Store (PDS) Microservices System
 
-This project implements a modular microservices-based system that includes a Solid-compliant Personal Data Store (PDS), services for issuing and verifying Verifiable Credentials (VCs), a user interface for WebID-based authentication and credential management, and integration with a MERN stack benefit application.
+This project implements a modular microservices-based prototype for handling verifiable credentials with a Solid-compliant Personal Data Store (PDS). The system enables users to obtain verifiable credentials from a government department simulator (DRO) and use them in a benefits application, all while maintaining control of their personal data.
 
 ## Architecture
 
 The system consists of the following microservices:
 
-1. **Solid PDS** - Hosts user pods and WebIDs using Community Solid Server
-2. **DID Registry Service** - Manages DIDs and DID Documents
-3. **Test VC Creator Service** - Generates and signs mock credentials and stores them in user's PDS
-4. **VC Verifier Service** - Verifies VCs using DID resolution and signature validation
-5. **React UI** - User interface for registration, login, and VC management
-6. **MERN App** - Benefit application that authenticates WebIDs and verifies VCs
+1. **API Registry** - Central registry for service API discovery and documentation
+2. **DID Registry** - Registry for did:web identifiers and DID documents
+3. **Solid PDS** - Personal Data Store based on Community Solid Server for hosting user data
+4. **VC Verifier** - Service for verifying credentials using DID resolution
+5. **Test VC Creator (DRO)** - Emulates a Departmental Records Office, issuing birth and marriage certificates as verifiable credentials using did:web
+6. **MERN App** - Benefits application with PDS integration for credential verification
 
 ## Directory Structure
 
 ```
 PDS/
-├── docker-compose.yml
-├── src/
-│   ├── solid-pds/
-│   │   └── specifications/
-│   ├── did-registry/
-│   │   └── specifications/
-│   ├── test-vc-creator/
-│   │   └── specifications/
-│   ├── vc-verifier/
-│   │   └── specifications/
-│   ├── react-ui/
-│   │   └── specifications/
-│   └── mern-app/
-│       └── specifications/
-└── data/
-    ├── solid-pds/
+├── docker-compose.yml          # Container orchestration
+├── BUILDING_GUIDE.md           # Guide for building each service
+├── IMPLEMENTATION_VERIFICATION.md # Verification of implementation guides
+├── nginx/                      # Reverse proxy configuration for domain emulation
+│   ├── conf/                   # Nginx configuration files
+│   └── certs/                  # Self-signed certificates for HTTPS
+├── api-registry/               # API Registry service
+│   └── specifications/         # API specifications
+├── did-registry/               # DID Registry service
+│   └── specifications/         # API specifications
+├── solid-pds/                  # Solid PDS service
+│   └── specifications/         # API specifications
+├── test-vc-creator/            # DRO service for issuing credentials
+│   └── specifications/         # API specifications
+├── vc-verifier/                # Service for verifying credentials
+│   └── specifications/         # API specifications
+├── mern-app/                   # Benefits application with PDS integration
+│   └── specifications/         # API specifications
+└── data/                       # Persistent data storage
+    ├── api-registry/
     ├── did-registry/
+    ├── solid-pds/
     ├── test-vc-creator/
-    └── vc-verifier/
+    ├── vc-verifier/
+    └── mern-app/
 ```
+
+## Authentication & Authorization Flows
+
+### DRO Authentication Flow
+1. User registers directly with the DRO service
+2. User authenticates to the DRO service
+3. User provides their WebID/PDS location
+4. DRO requests permission to store credentials in the user's PDS
+5. DRO issues and stores credentials in the user's PDS
+
+### MERN App Authorization Flow
+1. MERN app is registered as a client with the Solid PDS
+2. User grants one-time permission to the MERN app to access specific resources
+3. MERN app receives access and refresh tokens
+4. MERN app uses tokens to access authorized resources without further redirects
+5. Tokens are refreshed automatically when needed
 
 ## Getting Started
 
@@ -44,6 +66,8 @@ PDS/
 
 - Docker and Docker Compose
 - Git
+- Node.js 18+ (for development)
+- macOS with ability to edit /etc/hosts (for local domain emulation)
 
 ### Installation and Setup
 
@@ -53,42 +77,72 @@ PDS/
    cd PDS
    ```
 
-2. Start the system:
+2. Setup local domain emulation by adding these entries to your /etc/hosts file:
+   ```
+   127.0.0.1  pds.local
+   127.0.0.1  dro.gov.uk.local
+   127.0.0.1  benefits.gov.uk.local
+   ```
+
+3. Generate self-signed certificates (script included):
+   ```
+   ./scripts/generate-certs.sh
+   ```
+
+4. Start the system:
    ```
    docker-compose up -d
    ```
 
-3. Access the services:
-   - Solid PDS: http://localhost:3000
+5. Access the services:
+   - API Registry: http://localhost:3005
    - DID Registry: http://localhost:3001
-   - Test VC Creator: http://localhost:3002
-   - VC Verifier: http://localhost:3003
-   - React UI: http://localhost:3004
-   - MERN App: http://localhost:3005
+   - Solid PDS: https://pds.local
+   - VC Verifier: http://localhost:3004
+   - DRO Service: https://dro.gov.uk.local
+   - Benefits App: https://benefits.gov.uk.local
 
-## Service Specifications
+## Service Development
 
-Each microservice has its own specifications folder with API documentation. Refer to these specifications for integration details.
+Each microservice is designed to be developed independently, with integration through the API Registry. Service APIs are defined using OpenAPI specifications.
 
-## Development
+### Developing a Service
 
-To develop or modify a specific microservice:
+1. Navigate to the service directory
+2. Review the specifications folder for API requirements
+3. Follow the implementation guide in the service directory
+4. Implement the service according to the requirements
+5. Test the service using the provided test framework
+6. Build and run the service using Docker
 
-1. Navigate to the service directory:
-   ```
-   cd src/<service-name>
-   ```
+### Building All Services
 
-2. Make your changes
+To build and run all services together, follow the instructions in the `BUILDING_GUIDE.md` file, which provides a step-by-step guide for building each service with GitHub Copilot.
 
-3. Rebuild and restart the service:
-   ```
-   docker-compose up -d --build <service-name>
-   ```
+### Implementation Requirements
 
-## Data Persistence
+All services must be fully implemented with:
+- Complete functionality (no placeholders or stubs)
+- GOV.UK Design System compliant user interfaces
+- Comprehensive test coverage
+- Production-ready code
 
-All data is stored in the `./data` directory, with each service having its own subdirectory. This ensures data persists between container restarts.
+## Documentation
+
+- `BUILDING_GUIDE.md` - Step-by-step guide for building each service
+- `IMPLEMENTATION_VERIFICATION.md` - Verification of implementation guides
+- `REPOSITORY_CLEANUP_PLAN.md` - Plan for cleaning up the repository
+- Service-specific implementation guides in each service directory
+3. Implement the service according to specifications
+4. Publish the API specification to the API Registry
+5. Test the service with its defined API tests
+
+### Service Integration
+
+Services integrate with each other by:
+1. Discovering API specifications from the API Registry
+2. Using the API specifications to make standardized requests
+3. Following the defined authentication/authorization patterns
 
 ## License
 

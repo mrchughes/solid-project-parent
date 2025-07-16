@@ -3,16 +3,13 @@
 # Set your GitHub username here
 GITHUB_USERNAME="mrchughes"
 
-# List of all module names
+# List of all module names - cleaned up to only include required modules
 MODULES=(
   "api-registry"
   "did-registry"
   "mern-app"
-  "react-ui"
-  "solid-microservices"
   "solid-pds"
   "test-vc-creator"
-  "vc-issuer"
   "vc-verifier"
 )
 
