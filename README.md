@@ -31,26 +31,39 @@ PDS/
 │   ├── SERVICE_IMPLEMENTATION_CHECKLIST.md # Implementation checklist
 │   ├── UPDATED_ARCHITECTURE.md # Updated architecture documentation
 │   └── ARCHITECTURE_UPDATE_SUMMARY.md # Architecture update summary
-├── scripts/                    # Utility scripts
+├── shell/                      # Shell scripts for setup and management
 │   ├── setup_hosts.sh          # Script to set up local host entries
-│   └── setup_nginx.sh          # Script to set up nginx configuration
+│   ├── setup_nginx.sh          # Script to set up nginx configuration
+│   ├── generate-certs.sh       # Script to generate certificates
+│   ├── copy_standards.sh       # Script to copy standards to services
+│   └── cleanup-services.sh     # Script to clean up services
 ├── nginx/                      # Reverse proxy configuration
 │   ├── conf/                   # Nginx configuration files
 │   └── certs/                  # Self-signed certificates for HTTPS
 ├── api-registry/               # API Registry service
-│   ├── README-IMPLEMENTATION.md # Detailed implementation guide
+│   ├── docs/                   # Documentation for API Registry
+│   │   ├── README-IMPLEMENTATION.md # Detailed implementation guide
+│   │   └── IMPLEMENTATION_GUIDE.md # Implementation guide
 │   └── specifications/         # API specifications
 ├── solid-pds/                  # Solid PDS service
-│   ├── README-IMPLEMENTATION.md # Detailed implementation guide
+│   ├── docs/                   # Documentation for Solid PDS
+│   │   ├── README-IMPLEMENTATION.md # Detailed implementation guide
+│   │   └── IMPLEMENTATION_GUIDE.md # Implementation guide
 │   └── specifications/         # API specifications
 ├── DRO/                        # DRO service for issuing credentials
-│   ├── README-IMPLEMENTATION.md # Detailed implementation guide
+│   ├── docs/                   # Documentation for DRO
+│   │   ├── README-IMPLEMENTATION.md # Detailed implementation guide
+│   │   └── IMPLEMENTATION_GUIDE.md # Implementation guide
 │   └── specifications/         # API specifications
 ├── vc-verifier/                # Service for verifying credentials
-│   ├── README-IMPLEMENTATION.md # Detailed implementation guide
+│   ├── docs/                   # Documentation for VC Verifier
+│   │   ├── README-IMPLEMENTATION.md # Detailed implementation guide
+│   │   └── IMPLEMENTATION_GUIDE.md # Implementation guide
 │   └── specifications/         # API specifications
 ├── FEP/                        # Frontend Portal application with PDS integration
-│   ├── README-IMPLEMENTATION.md # Detailed implementation guide
+│   ├── docs/                   # Documentation for FEP
+│   │   ├── README-IMPLEMENTATION.md # Detailed implementation guide
+│   │   └── IMPLEMENTATION_GUIDE.md # Implementation guide
 │   └── specifications/         # API specifications
 └── data/                       # Persistent data storage
     ├── api-registry/
@@ -102,12 +115,12 @@ PDS/
    ```
    
    ```bash
-   sudo ./scripts/setup_hosts.sh
+   sudo ./shell/setup_hosts.sh
    ```
 
 3. Generate self-signed certificates:
    ```
-   ./scripts/generate-certs.sh
+   ./shell/generate-certs.sh
    ```
 
 4. Create a `.env` file at the root of the project with the following variables:

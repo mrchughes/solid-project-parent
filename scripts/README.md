@@ -1,27 +1,19 @@
-# PDS System Scripts
+# PDS System Scripts Directory
 
-This directory contains utility scripts for the PDS (Personal Data Store) microservices system.
+This directory previously contained utility scripts for the PDS microservices system.
 
-## Available Scripts
+## Note: Scripts Have Moved
 
-- **setup_hosts.sh** - Configures local host entries for domain emulation
-  ```
-  sudo ./scripts/setup_hosts.sh
-  ```
+All shell scripts have been moved to the `/shell` directory for better organization.
 
-- **setup_nginx.sh** - Sets up nginx configuration for did:web endpoints
-  ```
-  ./scripts/setup_nginx.sh
-  ```
+Please refer to the [Shell Scripts README](/shell/README.md) for the complete list of available scripts and their usage.
 
 ## Usage
 
-These scripts should be run from the parent directory:
+All scripts should now be run from the `/shell` directory:
 
 ```bash
 # From the PDS parent directory
-sudo ./scripts/setup_hosts.sh
-./scripts/setup_nginx.sh
+sudo ./shell/setup_hosts.sh
+./shell/setup_nginx.sh
 ```
-
-Both scripts should be run before starting the services with `docker-compose up -d`.
