@@ -21,7 +21,7 @@ Use this checklist to ensure each service implementation follows the loose coupl
 
 ### Service-Specific Requirements
 
-#### For DRO
+#### For Test VC Creator (DRO)
 
 - [ ] Implements did:web document at `/.well-known/did.json`
 - [ ] Generates and securely stores cryptographic keys
@@ -34,7 +34,7 @@ Use this checklist to ensure each service implementation follows the loose coupl
 - [ ] Verifies credentials without DID Registry dependency
 - [ ] Implements GOV.UK style guide compliant UI
 
-#### For FEP
+#### For MERN App
 
 - [ ] Integrates with Solid PDS for data storage
 - [ ] Uses VC Verifier for credential verification

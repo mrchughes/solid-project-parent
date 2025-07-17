@@ -39,8 +39,8 @@ Develop services in this order to minimize dependencies:
 
 1. **API Registry Service** - Enables other services to publish and discover APIs
 2. **Solid PDS** - Core data storage service
-3. **Test VC Creator (DRO)** - Departmental Records Office emulation
-4. **MERN App Extension** - Integration module for benefits application
+3. **DRO** - Departmental Records Office emulation
+4. **FEP** - Frontend Portal application
 
 ## Working with Copilot
 
@@ -147,7 +147,7 @@ Always provide these details to Copilot:
 5. **Publish API spec to Registry**:
    - Prompt: "Based on the requirements in specifications/api-registry-integration.md, help me implement the code to publish this service's API specification to the API Registry."
 
-### 3. Test VC Creator (DRO)
+### 3. DRO
 
 **Goal**: Implement a Departmental Records Office emulator that issues verifiable credentials.
 
@@ -163,7 +163,7 @@ Always provide these details to Copilot:
    ```
 
 3. **Implement with Copilot**:
-   - Prompt: "I'm implementing a Test VC Creator service that emulates a Departmental Records Office (DRO). It needs to issue birth and marriage certificates as verifiable credentials using did:web, have its own user authentication system, and store credentials in a user's PDS."
+   - Prompt: "I'm implementing a DRO service that emulates a Departmental Records Office. It needs to issue birth and marriage certificates as verifiable credentials using did:web, have its own user authentication system, and store credentials in a user's PDS."
    - Next prompt: "Help me implement the did:web functionality including the .well-known endpoint for DID document resolution."
    - Next prompt: "Let's implement the user registration and authentication system for the DRO."
    - Next prompt: "Now, I need to implement the credential issuance functionality for birth and marriage certificates using did:web signatures."
@@ -178,9 +178,9 @@ Always provide these details to Copilot:
 5. **Publish API spec to Registry**:
    - Prompt: "Help me implement the code to publish this service's API specification to the API Registry according to specifications/api-registry-integration.md."
 
-### 4. MERN App Extension
+### 4. FEP
 
-**Goal**: Create an extension module for the MERN benefits application to integrate with the PDS.
+**Goal**: Create a Frontend Portal application to integrate with the PDS.
 
 1. **Navigate to the service directory**:
    ```bash
@@ -194,11 +194,11 @@ Always provide these details to Copilot:
    ```
 
 3. **Implement with Copilot**:
-   - Prompt: "I'm creating an extension module for a MERN app to integrate with a Solid PDS. The module needs to register as a client with the PDS, handle OAuth-style authorization for one-time permission, and access VCs stored in the user's pod."
+   - Prompt: "I'm creating a Frontend Portal application to integrate with a Solid PDS. The application needs to register as a client with the PDS, handle OAuth-style authorization for one-time permission, and access VCs stored in the user's pod."
    - Next prompt: "Let's implement the client registration with the Solid PDS."
    - Next prompt: "Now, help me implement the OAuth authorization flow with token management."
    - Next prompt: "I need to implement the VC retrieval and verification functionality using did:web resolution."
-   - Final prompt: "Let's create a clean API that can be easily integrated with an existing MERN app."
+   - Final prompt: "Let's create a clean API that can be easily integrated into the application."
 
 4. **Test the implementation**:
    - Write tests for PDS client registration
@@ -259,7 +259,7 @@ Once all services are implemented:
 
 2. **Test end-to-end flows**:
    - DRO credential issuance flow
-   - MERN app credential retrieval flow
+   - FEP credential retrieval flow
    - did:web resolution flow
 
 3. **Validate against requirements**:
@@ -290,7 +290,7 @@ Once all services are implemented:
    - API Registry: http://localhost:3005
    - Solid PDS: https://pds.local
    - DRO Service: https://dro.gov.uk.local
-   - Benefits App: https://benefits.gov.uk.local
+   - FEP App: https://fep.gov.uk.local
 
 ### Production Deployment Considerations
 
@@ -555,8 +555,6 @@ If required, include the API key in requests using the header:
 X-API-Key: your-api-key-here
 Documentation
 
-Interactive docs: http://localhost:3005/ui/did-registry/latest
 This enables any service to discover, integrate, and interact with the DID Registry using the API Registry as a central source of truth.5. Documentation
 
-Interactive docs: http://localhost:3005/ui/did-registry/latest
 This enables any service to discover, integrate, and interact with the DID Registry using the API Registry as a central source of truth

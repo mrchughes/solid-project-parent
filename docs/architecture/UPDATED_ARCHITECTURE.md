@@ -6,9 +6,9 @@ The system consists of the following microservices:
 
 1. **API Registry** - Central registry for service API discovery and documentation
 2. **Solid PDS** - Personal Data Store based on Community Solid Server for hosting user data and WebIDs
-3. **DRO** - Emulates a Departmental Records Office, issuing birth and marriage certificates as verifiable credentials using did:web
+3. **Test VC Creator (DRO)** - Emulates a Departmental Records Office, issuing birth and marriage certificates as verifiable credentials using did:web
 4. **VC Verifier** - Service for verifying credentials presented by users
-5. **FEP** - Frontend Portal application with PDS integration for credential verification
+5. **MERN App** - Benefits application with PDS integration for credential verification
 
 Each service operates independently with its own did:web implementation where needed.
 
@@ -34,8 +34,8 @@ In the previous architecture, a central DID Registry service was used to manage 
 - Manages its own keys for signing credentials
 - No dependency on external DID registry
 
-### FEP
-- Exposes DID document at `https://fep.gov.uk.local/.well-known/did.json`
+### MERN App
+- Exposes DID document at `https://benefits.gov.uk.local/.well-known/did.json`
 - Manages its own keys for authentication
 - No dependency on external DID registry
 
@@ -68,12 +68,12 @@ In the previous architecture, a central DID Registry service was used to manage 
 5. DRO issues credentials and stores them in the user's PDS
 6. DRO's did:web identity can be verified by accessing `https://dro.gov.uk.local/.well-known/did.json`
 
-### FEP Authorization Flow
-1. FEP app is registered as a client with the Solid PDS
-2. User grants one-time permission to the FEP app to access specific resources
-3. FEP app receives access and refresh tokens
-4. FEP app uses tokens to access authorized resources without further redirects
-5. FEP app requests verification of credentials by the VC Verifier service
+### MERN App Authorization Flow
+1. MERN app is registered as a client with the Solid PDS
+2. User grants one-time permission to the MERN app to access specific resources
+3. MERN app receives access and refresh tokens
+4. MERN app uses tokens to access authorized resources without further redirects
+5. MERN app requests verification of credentials by the VC Verifier service
 6. VC Verifier verifies credentials by:
    - Checking the credential issuer (DRO's did:web)
    - Resolving the DID document at `https://dro.gov.uk.local/.well-known/did.json`
@@ -99,7 +99,7 @@ To emulate different domains locally:
    ```
    127.0.0.1  pds.local
    127.0.0.1  dro.gov.uk.local
-   127.0.0.1  fep.gov.uk.local
+   127.0.0.1  benefits.gov.uk.local
    127.0.0.1  verifier.gov.uk.local
    ```
 
@@ -116,7 +116,7 @@ To emulate different domains locally:
    
    server {
      listen 80;
-     server_name fep.gov.uk.local;
+     server_name benefits.gov.uk.local;
      location / {
        proxy_pass http://FEP:3003;
      }
@@ -149,13 +149,13 @@ Each service that needs a DID must:
 - Update service dependencies
 - Add environment variables for direct did:web resolution
 
-### Changes to DRO
+### Changes to Test VC Creator (DRO)
 - Implement direct did:web functionality
 - Remove references to external DID Registry
 - Add endpoint to expose DID document at `/.well-known/did.json`
 - Implement GOV.UK style guide compliant UI
 
-### Changes to FEP
+### Changes to MERN App
 - Implement direct did:web functionality
 - Remove references to external DID Registry
 - Add endpoint to expose DID document at `/.well-known/did.json`
@@ -177,7 +177,7 @@ Each service requires a GOV.UK Design System compliant UI:
    - Login
    - Data management
 
-2. **DRO**:
+2. **Test VC Creator (DRO)**:
    - User registration
    - Authentication
    - Credential request and issuance
@@ -187,7 +187,7 @@ Each service requires a GOV.UK Design System compliant UI:
    - Credential status display
    - Error handling and feedback
 
-4. **FEP**:
+4. **MERN App**:
    - User registration
    - Authentication
    - PDS connection

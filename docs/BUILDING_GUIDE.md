@@ -1,6 +1,28 @@
-# Dummy's Guide to Building the PDS Microservices System
+# Dummy's Guide to Building the PDS Microservices System (2025 Architecture)
+
+**Guide Status: UPDATED (July 2025) - Reflects latest did:web architecture without DID Registry**
 
 This guide provides step-by-step instructions for building each service in the Personal Data Store (PDS) microservices system using GitHub Copilot. Follow this guide to ensure you build the services in the correct order, with each one properly integrating with the others.
+
+## Quick Start
+
+1. Build the API Registry first
+2. Then the Solid PDS
+3. Then the VC Verifier
+4. Then the DRO
+5. Finally, the FEP
+6. Run `docker-compose up -d` to start the entire system
+
+For detailed step-by-step instructions, follow the guide below.
+
+## Updated Architecture
+
+The PDS system uses a decentralized architecture where:
+- Each service implements did:web directly instead of relying on a central DID Registry
+- Services use the API Registry to discover and integrate with each other
+- Solid PDS serves as the central storage for user credentials
+- Authentication is handled via OAuth 2.0 and JWT
+- The GOV.UK Design System is used for all user interfaces
 
 ## Critical Implementation Requirements
 
@@ -28,11 +50,10 @@ Before you begin:
 Building the services in the correct order is important to ensure proper integration. Here's the recommended build order:
 
 1. **API Registry** - Build first as other services will register with it
-2. **DID Registry** - Build second as credential-related services need it
-3. **Solid PDS** - Build third as it's the core data storage for credentials
-4. **VC Verifier** - Build fourth to verify credentials
-5. **Test VC Creator (DRO)** - Build fifth to issue credentials to the PDS
-6. **MERN App** - Build last to consume and verify credentials from the PDS
+2. **Solid PDS** - Build second as it's the core data storage for credentials
+3. **VC Verifier** - Build third to verify credentials
+4. **Test VC Creator (DRO)** - Build fourth to issue credentials to the PDS
+5. **MERN App** - Build last to consume and verify credentials from the PDS
 
 ## Step-by-Step Guide
 
@@ -64,38 +85,7 @@ cd /Users/chrishughes/Projects/PDS/api-registry
    - Run: `docker build -t api-registry .`
    - Run: `docker run -p 3005:3005 api-registry`
 
-### 2. Building the DID Registry
-
-```
-cd /Users/chrishughes/Projects/PDS/did-registry
-```
-
-1. **Open the Implementation Guide**:
-   - Open `IMPLEMENTATION_GUIDE.md` to understand the requirements and implementation steps
-   
-2. **Ask Copilot to implement the DID service**:
-   - Prompt: "Implement the DID management service based on the implementation guide"
-   
-3. **Create the DID Document manager**:
-   - Prompt: "Implement the DID Document management functionality"
-   
-4. **Implement did:web resolution**:
-   - Prompt: "Create the did:web resolver functionality"
-   
-5. **Create the API integration**:
-   - Prompt: "Implement the API Registry integration for the DID Registry"
-   
-6. **Set up authentication**:
-   - Prompt: "Implement JWT authentication for the DID Registry API"
-   
-7. **Test the implementation**:
-   - Prompt: "Create tests for the DID Registry service"
-   
-8. **Build and run the service**:
-   - Run: `docker build -t did-registry .`
-   - Run: `docker run -p 3001:3001 did-registry`
-
-### 3. Building the Solid PDS
+### 2. Building the Solid PDS
 
 ```
 cd /Users/chrishughes/Projects/PDS/solid-pds
@@ -110,7 +100,10 @@ cd /Users/chrishughes/Projects/PDS/solid-pds
 3. **Implement OAuth integration**:
    - Prompt: "Implement the OAuth 2.0 client configuration for service-to-service authentication"
    
-4. **Create credential storage**:
+4. **Implement did:web identity**:
+   - Prompt: "Implement the did:web identity with .well-known endpoint for the Solid PDS"
+   
+5. **Create credential storage**:
    - Prompt: "Implement the credential storage handler for the Solid PDS"
    
 5. **Set up API Registry integration**:
@@ -129,7 +122,7 @@ cd /Users/chrishughes/Projects/PDS/solid-pds
    - Run: `docker build -t solid-pds .`
    - Run: `docker run -p 3000:3000 solid-pds`
 
-### 4. Building the VC Verifier
+### 3. Building the VC Verifier
 
 ```
 cd /Users/chrishughes/Projects/PDS/vc-verifier
@@ -158,9 +151,9 @@ cd /Users/chrishughes/Projects/PDS/vc-verifier
    
 8. **Build and run the service**:
    - Run: `docker build -t vc-verifier .`
-   - Run: `docker run -p 3002:3002 vc-verifier`
+   - Run: `docker run -p 3004:3004 vc-verifier`
 
-### 5. Building the DRO
+### 4. Building the Test VC Creator (DRO)
 
 ```
 cd /Users/chrishughes/Projects/PDS/DRO
@@ -194,7 +187,7 @@ cd /Users/chrishughes/Projects/PDS/DRO
    - Run: `docker build -t DRO .`
    - Run: `docker run -p 3003:3003 DRO`
 
-### 6. Building the FEP (MERN App)
+### 5. Building the MERN App
 
 ```
 cd /Users/chrishughes/Projects/PDS/FEP
@@ -282,13 +275,13 @@ This will start all services in the correct order with the necessary environment
    - Validate token expiration and refresh logic
 
 4. **DID resolution fails**:
-   - Check the DID Registry is running and accessible
-   - Verify did:web configuration
+   - Verify did:web configuration in each service
    - Check domain name resolution in /etc/hosts
+   - Ensure .well-known DID endpoints are properly implemented
 
 ## Conclusion
 
-Following this guide, you've built a complete microservices system with a Solid PDS, DID Registry, VC Verifier, Test VC Creator (DRO), and MERN App integration. The system demonstrates how to manage verifiable credentials in a user-controlled personal data store while enabling third-party services to issue and verify those credentials.
+Following this guide, you've built a complete microservices system with a Solid PDS, VC Verifier, Test VC Creator (DRO), and MERN App integration. The system demonstrates how to manage verifiable credentials in a user-controlled personal data store while enabling third-party services to issue and verify those credentials using did:web for decentralized identifiers.
 
 All services are fully functional with production-ready code and GOV.UK Design System compliant user interfaces. There are no placeholders or incomplete implementations in any part of the system.
 

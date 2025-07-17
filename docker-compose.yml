@@ -11,6 +11,13 @@ services:
     volumes:
       - ./nginx/conf:/etc/nginx/conf.d
       - ./nginx/certs:/etc/nginx/certs
+      - ./nginx/logs:/var/log/nginx
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     networks:
       - pds-network
     depends_on:
@@ -23,6 +30,7 @@ services:
   api-registry:
     build:
       context: ./api-registry
+      dockerfile: Dockerfile
     container_name: api-registry
     ports:
       - "3005:3005"
@@ -30,10 +38,37 @@ services:
       - ./api-registry:/app
       - ./data/api-registry:/data
     environment:
+      - NODE_ENV=${NODE_ENV:-development}
       - PORT=3005
       - SERVICE_NAME=api-registry
       - SERVICE_VERSION=1.0.0
-      - API_KEY=your-api-key-here
+      - MONGODB_URI=${API_REGISTRY_MONGODB_URI:-mongodb://mongo:27017/api-registry}
+      - ADMIN_API_KEY=${ADMIN_API_KEY:-admin_dev_key_replace_in_production}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - JWT_SECRET=${JWT_SECRET:-dev_jwt_secret_replace_in_production}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "http://localhost:3005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - pds-network
+    depends_on:
+      - mongo
+
+  # MongoDB for API Registry and other services
+  mongo:
+    image: mongo:6.0
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data/mongo:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME:-admin}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD:-password}
+    restart: unless-stopped
     networks:
       - pds-network
 
@@ -48,21 +83,34 @@ services:
       - ./data/solid-pds:/data
       - ./solid-pds/config:/config
     environment:
+      - NODE_ENV=${NODE_ENV:-development}
       - CSS_CONFIG=/config/default.json
       - CSS_PORT=3000
       - SERVICE_NAME=solid-pds
       - SERVICE_VERSION=1.0.0
       - API_REGISTRY_URL=http://api-registry:3005
-      - API_REGISTRY_KEY=your-api-key-here
+      - API_REGISTRY_KEY=${API_REGISTRY_KEY:-default_dev_key_replace_in_production}
+      - JWT_SECRET=${JWT_SECRET:-dev_jwt_secret_replace_in_production}
+      - ADMIN_USERNAME=${SOLID_ADMIN_USERNAME:-admin}
+      - ADMIN_PASSWORD=${SOLID_ADMIN_PASSWORD:-password}
+      - COOKIE_SECRET=${COOKIE_SECRET:-dev_cookie_secret_replace_in_production}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     networks:
       - pds-network
     depends_on:
       - api-registry
 
-  # Test VC Creator Service (DRO)
+  # DRO Service
   DRO:
     build:
       context: ./DRO
+      dockerfile: Dockerfile
     container_name: DRO
     ports:
       - "3002:3002"
@@ -70,23 +118,37 @@ services:
       - ./DRO:/app
       - ./data/DRO:/data
     environment:
+      - NODE_ENV=${NODE_ENV:-development}
       - PORT=3002
       - SERVICE_NAME=DRO
       - SERVICE_VERSION=1.0.0
       - SOLID_PDS_URL=http://solid-pds:3000
       - API_REGISTRY_URL=http://api-registry:3005
-      - API_REGISTRY_KEY=your-api-key-here
+      - API_REGISTRY_KEY=${API_REGISTRY_KEY:-default_dev_key_replace_in_production}
       - DRO_DOMAIN=dro.gov.uk.local
+      - MONGODB_URI=${DRO_MONGODB_URI:-mongodb://mongo:27017/dro}
+      - ISSUER_DID=${DRO_ISSUER_DID:-did:web:dro.gov.uk.local}
+      - VC_CONTEXT=${VC_CONTEXT:-https://www.w3.org/2018/credentials/v1}
+      - JWT_SECRET=${JWT_SECRET:-dev_jwt_secret_replace_in_production}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     networks:
       - pds-network
     depends_on:
       - solid-pds
       - api-registry
+      - mongo
 
   # VC Verifier Service
   vc-verifier:
     build:
       context: ./vc-verifier
+      dockerfile: Dockerfile
     container_name: vc-verifier
     ports:
       - "3004:3004"
@@ -94,20 +156,35 @@ services:
       - ./vc-verifier:/app
       - ./data/vc-verifier:/data
     environment:
+      - NODE_ENV=${NODE_ENV:-development}
       - PORT=3004
       - SERVICE_NAME=vc-verifier
       - SERVICE_VERSION=1.0.0
       - API_REGISTRY_URL=http://api-registry:3005
-      - API_REGISTRY_KEY=your-api-key-here
+      - API_REGISTRY_KEY=${API_REGISTRY_KEY:-default_dev_key_replace_in_production}
+      - MONGODB_URI=${VERIFIER_MONGODB_URI:-mongodb://mongo:27017/vc-verifier}
+      - TRUSTED_ISSUERS=${TRUSTED_ISSUERS:-did:web:dro.gov.uk.local}
+      - JWT_SECRET=${JWT_SECRET:-dev_jwt_secret_replace_in_production}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - RATE_LIMIT_WINDOW_MS=${RATE_LIMIT_WINDOW_MS:-60000}
+      - RATE_LIMIT_MAX_REQUESTS=${RATE_LIMIT_MAX_REQUESTS:-100}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "http://localhost:3004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     networks:
       - pds-network
     depends_on:
       - api-registry
+      - mongo
 
-  # MERN App Extension (FEP)
+  # FEP Service
   FEP:
     build:
       context: ./FEP
+      dockerfile: Dockerfile
     container_name: FEP
     ports:
       - "3003:3003"
@@ -115,21 +192,36 @@ services:
       - ./FEP:/app
       - ./data/FEP:/data
     environment:
+      - NODE_ENV=${NODE_ENV:-development}
       - PORT=3003
       - SERVICE_NAME=FEP
       - SERVICE_VERSION=1.0.0
       - SOLID_PDS_URL=http://solid-pds:3000
       - VC_VERIFIER_URL=http://vc-verifier:3004
       - API_REGISTRY_URL=http://api-registry:3005
-      - API_REGISTRY_KEY=your-api-key-here
+      - API_REGISTRY_KEY=${API_REGISTRY_KEY:-default_dev_key_replace_in_production}
       - APP_DOMAIN=fep.gov.uk.local
       - APP_NAME=FEP Application
+      - MONGODB_URI=${FEP_MONGODB_URI:-mongodb://mongo:27017/fep}
+      - JWT_SECRET=${JWT_SECRET:-dev_jwt_secret_replace_in_production}
+      - COOKIE_SECRET=${COOKIE_SECRET:-dev_cookie_secret_replace_in_production}
+      - SESSION_SECRET=${SESSION_SECRET:-dev_session_secret_replace_in_production}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - RATE_LIMIT_WINDOW_MS=${RATE_LIMIT_WINDOW_MS:-60000}
+      - RATE_LIMIT_MAX_REQUESTS=${RATE_LIMIT_MAX_REQUESTS:-100}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "http://localhost:3003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     networks:
       - pds-network
     depends_on:
       - solid-pds
       - api-registry
       - vc-verifier
+      - mongo
 
 networks:
   pds-network:

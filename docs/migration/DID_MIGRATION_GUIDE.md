@@ -12,7 +12,7 @@ The architecture has been updated to remove the central DID Registry service in 
 
 ## Migration Steps for Each Service
 
-### DRO
+### Test VC Creator (DRO)
 
 1. **Implement did:web Document Endpoint**:
    ```javascript
@@ -102,7 +102,7 @@ The architecture has been updated to remove the central DID Registry service in 
 
 ### VC Verifier
 
-1. **Implement Direct DID Resolution** (similar to DRO)
+1. **Implement Direct DID Resolution** (similar to Test VC Creator)
 
 2. **Update Credential Verification**:
    ```javascript
@@ -132,7 +132,7 @@ The architecture has been updated to remove the central DID Registry service in 
    }
    ```
 
-### FEP
+### MERN App
 
 1. **Update to Use the VC Verifier**:
    ```javascript
@@ -168,7 +168,7 @@ After implementing the changes, test the following flows:
    - Test verification of the credential by the VC Verifier
 
 3. **MERN App Integration**:
-   - Test the FEP's integration with the VC Verifier
+   - Test the MERN App's integration with the VC Verifier
    - Ensure the app can request and display verification results
 
 ## Common Issues and Solutions

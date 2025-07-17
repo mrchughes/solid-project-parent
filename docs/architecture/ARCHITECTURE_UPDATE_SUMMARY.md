@@ -16,7 +16,7 @@ We have updated the PDS architecture to remove the central DID Registry service 
    - Detailed the distributed did:web implementation approach
    - Outlined the changes required for each service
 
-3. **FEP docker-compose.yml**
+3. **MERN App docker-compose.yml**
    - Removed DID_REGISTRY_URL environment variable
    - Added APP_DOMAIN environment variable for did:web resolution
 
@@ -24,7 +24,7 @@ We have updated the PDS architecture to remove the central DID Registry service 
 
 To complete the implementation of this updated architecture, the following steps are required:
 
-### For the DRO
+### For the Test VC Creator (DRO)
 
 1. Implement a `/.well-known/did.json` endpoint that serves a valid DID document
 2. Update credential signing to use the local keypair instead of relying on the DID Registry
@@ -37,7 +37,7 @@ To complete the implementation of this updated architecture, the following steps
 2. Update credential verification to resolve DIDs directly from their source domains
 3. Remove any code that interacts with the DID Registry
 
-### For the FEP
+### For the MERN App
 
 1. Implement a `/.well-known/did.json` endpoint if needed
 2. Update to use the VC Verifier service for credential verification
@@ -47,7 +47,7 @@ To complete the implementation of this updated architecture, the following steps
 
 1. Update to ensure proper routing for the `/.well-known/did.json` endpoints on each domain:
    - dro.gov.uk.local
-   - fep.gov.uk.local
+   - benefits.gov.uk.local
    - verifier.gov.uk.local
 
 ## Testing the Updated Architecture
@@ -56,7 +56,7 @@ To verify that the updated architecture works correctly, test the following flow
 
 1. DRO issuing credentials with its did:web identity
 2. VC Verifier resolving the DRO's DID and verifying credentials
-3. FEP connecting to the VC Verifier for credential verification
+3. MERN App connecting to the VC Verifier for credential verification
 4. End-to-end flow from credential issuance to verification in the benefits application
 
 ## UI Requirements

@@ -8,7 +8,7 @@ The system consists of the following microservices:
 
 1. **API Registry** - Central registry for service API discovery and documentation
 2. **Solid PDS** - Personal Data Store based on Community Solid Server for hosting user data and WebIDs
-3. **DRO** - Emulates a Departmental Records Office, issuing birth and marriage certificates as verifiable credentials using did:web
+3. **DRO** - Departmental Records Office, issuing birth and marriage certificates as verifiable credentials using did:web
 4. **VC Verifier** - Service for verifying credentials using direct did:web resolution
 5. **FEP** - Frontend Portal application with PDS integration for credential verification
 
@@ -23,6 +23,9 @@ PDS/
 │   ├── BUILDING_GUIDE.md       # Guide for building each service
 │   ├── BUILD_AND_DEPLOY_GUIDE.md # Detailed build and deployment guide
 │   ├── DID_MIGRATION_GUIDE.md  # Guide for migrating to direct did:web
+│   ├── ERROR_HANDLING_STANDARDS.md # Standard error handling format
+│   ├── DATA_MODELS.md          # Standard data models across services
+│   ├── GOVUK_DESIGN_SYSTEM_GUIDE.md # UI implementation guidelines
 │   ├── IMPLEMENTATION_VERIFICATION.md # Verification of implementation
 │   ├── MICROSERVICES_BEST_PRACTICES.md # Best practices guide
 │   ├── SERVICE_IMPLEMENTATION_CHECKLIST.md # Implementation checklist
@@ -35,14 +38,19 @@ PDS/
 │   ├── conf/                   # Nginx configuration files
 │   └── certs/                  # Self-signed certificates for HTTPS
 ├── api-registry/               # API Registry service
+│   ├── README-IMPLEMENTATION.md # Detailed implementation guide
 │   └── specifications/         # API specifications
 ├── solid-pds/                  # Solid PDS service
+│   ├── README-IMPLEMENTATION.md # Detailed implementation guide
 │   └── specifications/         # API specifications
-├── DRO/                  # DRO service for issuing credentials
+├── DRO/                        # DRO service for issuing credentials
+│   ├── README-IMPLEMENTATION.md # Detailed implementation guide
 │   └── specifications/         # API specifications
 ├── vc-verifier/                # Service for verifying credentials
+│   ├── README-IMPLEMENTATION.md # Detailed implementation guide
 │   └── specifications/         # API specifications
-├── FEP/                   # Frontend Portal application with PDS integration
+├── FEP/                        # Frontend Portal application with PDS integration
+│   ├── README-IMPLEMENTATION.md # Detailed implementation guide
 │   └── specifications/         # API specifications
 └── data/                       # Persistent data storage
     ├── api-registry/
@@ -56,16 +64,16 @@ PDS/
 
 ### DRO Authentication Flow
 1. User registers directly with the DRO service
-2. User authenticates to the DRO service
+2. User authenticates to the DRO service using JWT-based authentication
 3. User provides their WebID/PDS location
 4. DRO requests permission to store credentials in the user's PDS
 5. DRO issues and stores credentials in the user's PDS
 
-### MERN App Authorization Flow
-1. MERN app is registered as a client with the Solid PDS
-2. User grants one-time permission to the MERN app to access specific resources
-3. MERN app receives access and refresh tokens
-4. MERN app uses tokens to access authorized resources without further redirects
+### FEP Authorization Flow
+1. FEP app is registered as a client with the Solid PDS
+2. User grants one-time permission to the FEP app to access specific resources
+3. FEP app receives access and refresh tokens
+4. FEP app uses tokens to access authorized resources without further redirects
 5. Tokens are refreshed automatically when needed
 
 ## Getting Started
@@ -85,57 +93,76 @@ PDS/
    cd PDS
    ```
 
-2. Setup local domain emulation by adding these entries to your /etc/hosts file:
+2. Setup local domain emulation by adding these entries to your /etc/hosts file (or use the provided script):
    ```
    127.0.0.1  pds.local
    127.0.0.1  dro.gov.uk.local
-   127.0.0.1  benefits.gov.uk.local
+   127.0.0.1  fep.gov.uk.local
+   127.0.0.1  verifier.gov.uk.local
+   ```
+   
+   ```bash
+   sudo ./scripts/setup_hosts.sh
    ```
 
-3. Generate self-signed certificates (script included):
+3. Generate self-signed certificates:
    ```
    ./scripts/generate-certs.sh
    ```
 
-4. Start the system:
+4. Create a `.env` file at the root of the project with the following variables:
+   ```
+   # General
+   NODE_ENV=development
+   LOG_LEVEL=info
+
+   # Security
+   JWT_SECRET=your_secure_jwt_secret
+   COOKIE_SECRET=your_secure_cookie_secret
+   SESSION_SECRET=your_secure_session_secret
+
+   # API Keys
+   API_REGISTRY_KEY=your_secure_api_key
+   ADMIN_API_KEY=your_secure_admin_key
+
+   # MongoDB
+   MONGO_ROOT_USERNAME=admin
+   MONGO_ROOT_PASSWORD=secure_password
+   ```
+
+5. Start the system:
    ```
    docker-compose up -d
    ```
 
-5. Access the services:
+6. Access the services:
    - API Registry: http://localhost:3005
    - Solid PDS: https://pds.local
    - VC Verifier: http://localhost:3004 or https://verifier.gov.uk.local
    - DRO Service: https://dro.gov.uk.local
-   - Benefits App: https://benefits.gov.uk.local
+   - FEP App: https://fep.gov.uk.local
 
-## Setup Instructions
+## Standardization Improvements
 
-1. Clone this repository:
-   ```
-   git clone https://github.com/mrchughes/solid-project-parent.git
-   cd solid-project-parent
-   ```
+Recent system-wide improvements include:
 
-2. Set up host entries (requires root/admin privileges):
-   ```
-   sudo ./scripts/setup_hosts.sh
-   ```
+1. **Standardized Error Handling**: Common error format and codes across all services
+   - See [Error Handling Standards](./docs/ERROR_HANDLING_STANDARDS.md)
 
-3. Set up the nginx configuration:
-   ```
-   ./scripts/setup_nginx.sh
-   ```
+2. **Consistent Data Models**: Standardized data models for all services
+   - See [Data Models](./docs/DATA_MODELS.md)
 
-4. Start the services:
-   ```
-   docker-compose up -d
-   ```
+3. **UI Standards**: GOV.UK Design System implementation guide
+   - See [GOV.UK Design System Guide](./docs/GOVUK_DESIGN_SYSTEM_GUIDE.md)
 
-5. For implementation details for each service, refer to:
-   - [DID Migration Guide](./docs/DID_MIGRATION_GUIDE.md) for implementing did:web
-   - [Updated Architecture](./docs/UPDATED_ARCHITECTURE.md) for architecture details
-   - Individual service README files for specific implementation requirements
+4. **Environment Variables**: Moved from hardcoded values to environment variables
+   - See [Build and Deploy Guide](./docs/BUILD_AND_DEPLOY_GUIDE.md)
+
+5. **Service Documentation**: Each service has its own comprehensive README-IMPLEMENTATION.md
+
+6. **Distributed Standards**: All standards documents are copied to each service directory
+   - Use [Standards Implementation Guide](./docs/STANDARDS_IMPLEMENTATION_GUIDE.md) for guidance
+   - Standards can be updated using the `scripts/copy_standards.sh` script
 
 ## Service Development
 
@@ -150,16 +177,15 @@ Each microservice is designed to be developed independently, with integration th
 5. Test the service using the provided test framework
 6. Build and run the service using Docker
 
-### Building All Services
-
-To build and run all services together, follow the instructions in the `docs/BUILDING_GUIDE.md` file, which provides a step-by-step guide for building each service with GitHub Copilot.
-
 ### Implementation Requirements
 
 All services must be fully implemented with:
 - Complete functionality (no placeholders or stubs)
 - GOV.UK Design System compliant user interfaces
-- Comprehensive test coverage
+- Comprehensive test coverage (minimum 80%)
+- Standardized error handling
+- Environment variable configuration
+- Standard data models
 - Production-ready code
 
 ## Documentation
@@ -168,6 +194,9 @@ All project documentation is located in the `docs/` directory:
 
 - `docs/BUILDING_GUIDE.md` - Step-by-step guide for building each service
 - `docs/BUILD_AND_DEPLOY_GUIDE.md` - Detailed build and deployment guide
+- `docs/ERROR_HANDLING_STANDARDS.md` - Standard error handling format
+- `docs/DATA_MODELS.md` - Standard data models across services
+- `docs/GOVUK_DESIGN_SYSTEM_GUIDE.md` - UI implementation guidelines
 - `docs/IMPLEMENTATION_VERIFICATION.md` - Verification of implementation guides
 - `docs/UPDATED_ARCHITECTURE.md` - Updated architecture documentation
 - `docs/ARCHITECTURE_UPDATE_SUMMARY.md` - Summary of architecture changes
@@ -175,7 +204,7 @@ All project documentation is located in the `docs/` directory:
 - `docs/MICROSERVICES_BEST_PRACTICES.md` - Best practices for loose coupling and high cohesion
 - `docs/SERVICE_IMPLEMENTATION_CHECKLIST.md` - Checklist for service implementation
 
-Each service also has its own implementation guide in its respective directory.
+Each service also has its own detailed implementation guide in its respective directory.
 
 ### Service Integration
 
@@ -184,6 +213,17 @@ Services integrate with each other by:
 2. Using the API specifications to make standardized requests
 3. Following the defined authentication/authorization patterns
 4. Resolving DIDs directly using the did:web method
+5. Following standardized error handling and data models
+
+## Security Considerations
+
+- All API keys should be rotated regularly
+- JWT secrets should be secure and environment-specific
+- Always use HTTPS in production
+- Implement proper input validation
+- Follow the principle of least privilege
+- Ensure proper access controls for all endpoints
+- See [security section in each service README-IMPLEMENTATION.md]
 
 ## Independent Building and Testing
 

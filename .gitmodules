@@ -1,21 +1,15 @@
 [submodule "api-registry"]
 	path = api-registry
 	url = https://github.com/mrchughes/api-registry.git
-[submodule "did-registry"]
-	path = did-registry
-	url = https://github.com/mrchughes/did-registry.git
 [submodule "FEP"]
 	path = FEP
-	url = https://github.com/mrchughes/mern-app.git
-[submodule "react-ui"]
-	path = react-ui
-	url = https://github.com/mrchughes/react-ui.git
+	url = https://github.com/mrchughes/FEP.git
 [submodule "solid-pds"]
 	path = solid-pds
 	url = https://github.com/mrchughes/solid-pds.git
 [submodule "DRO"]
 	path = DRO
-	url = https://github.com/mrchughes/test-vc-creator.git
+	url = https://github.com/mrchughes/DRO.git
 [submodule "vc-verifier"]
 	path = vc-verifier
 	url = https://github.com/mrchughes/vc-verifier.git
